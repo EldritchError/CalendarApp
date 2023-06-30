@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from models import *
 
 class CalendarAPI:
     def initialize(self):
@@ -7,9 +8,11 @@ class CalendarAPI:
         def home():
             return {"Test": "Is Alive"}
 
-        @self.app.get("/test/{date}")
-        def test(date:int):
-            return {date: {("13:00", "14:00"): "Meeting"}}
+        @self.app.get("/calendar/month={month}")
+        def test(month:int):
+            day = 1
+            my_card = ScheduledToDoCard(id=1, due_date=1, pattern=CalendarPattern(days_of_the_week=DaysOfTheWeek(False, True, False, True, False, True)))
+            return {day: {"start_time": "13:00", "end_time": "14:00", "cards": ScheduledToDoCard}}
     
     def start(self, port=8000, host="0.0.0.0"):
         uvicorn.run(self.app, port=port, host=host)
