@@ -1,4 +1,4 @@
-FROM python:3.10.11
+FROM python:3.11.4
 
 ADD ./src ./src
 ADD requirements.txt .

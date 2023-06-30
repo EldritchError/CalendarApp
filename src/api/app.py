@@ -6,6 +6,12 @@ class CalendarAPI:
         @self.app.get("/")
         def home():
             return {"Test": "Is Alive"}
+        
+        @self.app.get("/calendar/{month}")
+        def calendar_month(int month):
+            # get data from database
+            data = {1: {("13:00", "14:00"): "Meeting"}}
+            return data
     
     def start(self, port=8000, host="0.0.0.0"):
         uvicorn.run(self.app, port=port, host=host)
