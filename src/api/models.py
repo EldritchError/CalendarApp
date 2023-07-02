@@ -1,49 +1,38 @@
-import time
 import datetime
+import uuid
 
 class Card:
-    def __init__(self, id, name="", text="") -> None:
-        self.id = id
+    def __init__(self, name="", text="") -> None:
+        self.id = uuid.uuid4()
         self.name = name
         self.text = text
 
 class ToDoCard(Card):
-    def __init__(self, id, name="", text="", done=False) -> None:
-        super().__init__(id, name, text)
+    def __init__(self, name="", text="", done=False) -> None:
+        super().__init__(name, text)
         self.done = done
 
-def time_string_to_int(time_str:str):
-    hour, minute = time_str.split(":")
-    result = int(hour) * 60 + int(minute)
-    return result
+class SchedulePattern:
+    def __init__(self, monday=False, tuesday=False, wednesday=False, 
+                 thursday=False, friday=False, saturday=False, sunday=False, 
+                 repeating_every_x_week=1, repeating_every_x_month=1, repeating_every_x_year=1) -> None:
+        self.days_of_week = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+        self.repeating_every_x_week = repeating_every_x_week
+        self.repeating_every_x_month = repeating_every_x_month
+        self.repeating_every_x_year = repeating_every_x_year
 
-class EndTimeWithoutStartTimeException(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-class Day:
-    def add_card(self, card:Card, start_time:str, end_time:str):
-        if start_time == None and end_time == None:
-            self.cards.append(card)
-        elif start_time != None:
-            if end_time == None:
-                self.scheduled_cards[start_time + "--" + start_time] = card
-            else:
-                self.scheduled_cards[start_time + "--" + end_time] = card
+class ScheduledToDoCard(ToDoCard):
+    def __init__(self, date:datetime.date, start_time=None, end_time=None, name="", text="", done=False, repeating=False) -> None:
+        super().__init__(name, text, done)
+        self.date = date
+        self.scheduled_with_time_of_day = start_time != None or end_time != None
+        if start_time != None:
+            self.start_time = start_time
         else:
-            raise EndTimeWithoutStartTimeException()
-
-    def __init__(self) -> None:
-        self.cards = []
-        # Key definition: start time -> "hour:minute--hour:minute" <- end time
-        self.scheduled_cards = {}
-
-class Week:
-    def __init__(self, monday=Day(), tuesday=Day(), wednesday=Day(), thursday=Day(), friday=Day(), saturday=Day(), sunday=Day()) -> None:
-        self.monday = monday
-        self.tuesday = tuesday
-        self.wednesday = wednesday
-        self.thursday = thursday
-        self.friday = friday
-        self.saturday = saturday
-        self.sunday = sunday
+            self.start_time = datetime.time(0, 0)
+        if end_time != None:
+            self.end_time = end_time
+        else:
+            self.end_time = datetime.time(23, 59, 59)
+        self.repeating = repeating
+        self.pattern = SchedulePattern()
