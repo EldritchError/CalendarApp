@@ -50,20 +50,8 @@ class ScheduledToDoCard(ToDoCard):
     date: Mapped[datetime.date] = mapped_column(datetime.date)
     start_time: Mapped[datetime.time] = mapped_column(datetime.time)
     end_time: Mapped[datetime.time] = mapped_column(datetime.time)
+    repeating: Mapped[bool] = mapped_column(bool)
+    pattern: Mapped[uuid.UUID] = mapped_column(bool) # ToDo: implement as foreign key
     
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, name={self.name!r}, fullname={self.fullname!r})"
-
-    def __init__(self, date:datetime.date, start_time=None, end_time=None, name="", text="", done=False, repeating=False) -> None:
-        super().__init__(name, text, done)
-        self.date = date
-        self.timeframe = None
-        if start_time != None:
-            if end_time != None:
-                self.timeframe = (start_time, end_time)
-            else:
-                self.timeframe = (start_time, "23:59")
-        elif end_time != None:
-            self.timeframe = ("00:00", end_time)
-        self.repeating = repeating
-        self.pattern = SchedulePattern()
